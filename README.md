@@ -14,5 +14,3 @@ I think we were putting the cart before the horse a bit, by making the tools fir
 
 1. running the plugin in a test server
 1. bundling the plugin so that it can be distributed as an .hpi file
-1. generators for models.
-1. generators for actions
