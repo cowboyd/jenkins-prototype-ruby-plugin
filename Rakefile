@@ -10,14 +10,11 @@ PluginVersion = '0.1.0'
 PluginJenkinsVersion = ">= 1.410"
 PluginDeps = []
 
+require 'jenkins/rake'
+Jenkins::Rake.install_tasks
+
 desc "run a Jenkins server with this plugin"
 task :server do
   #do stuff to generate a valid .hpl
   # this might involve compiling some custome java classes, generating manifests, etc.
-end
-
-
-desc "build #{PluginName}-#{PluginVersion}.hpi into the pkg directory"
-task :package do
-  # this is a stub for the packaging
 end
