@@ -2,3 +2,5 @@ Gemfile.lock
 .bundle
 .rvmrc
 .rspec
+.idea
+target
