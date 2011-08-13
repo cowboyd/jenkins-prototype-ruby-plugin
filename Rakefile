@@ -1,5 +1,4 @@
 
-
 # First, let's declare some metadata about the plugin that might be needed. These are properties
 # I just pulled out of the air. The point is, let's put everything as constants here, and then maybe we can
 # move all the metadata eventually into a `Pluginfile` or a `ruby-prototype.pluginspec` that can be eval'd
