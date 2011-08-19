@@ -1,7 +1,3 @@
 source :rubygems
 
-gem "jenkins-plugins", :git => "https://github.com/cowboyd/jenkins-plugins.rb.git"
-
-group :development do
-  gem "jenkins-war"
-end
+gem "jenkins-plugin-runtime", :path => "#{File.dirname(__FILE__)}/../jenkins-plugins.rb/runtime"

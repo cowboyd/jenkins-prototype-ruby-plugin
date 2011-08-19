@@ -2,6 +2,6 @@
 # run rake with co-located jenkins-plugin.rb
 # this makes the edit/run cycle faster by eliminating the need to rebuild jenkins-plugins gem
 require 'pathname'
-$:.unshift Pathname(__FILE__).dirname.join('../jenkins-plugins.rb/lib').expand_path
+$:.unshift Pathname(__FILE__).dirname.join('../jenkins-plugins.rb/tools/lib').expand_path
 load 'Rakefile'
 
