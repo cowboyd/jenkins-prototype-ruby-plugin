@@ -47,6 +47,7 @@ task :server => [:bundle, work] do
     # TODO: where do we put views?
     # TODO: where do we put static resources?
     f.puts "Resource-Path: #{Dir.pwd}/views"
+    f.puts "Gems-Home: #{Dir.pwd}/pkg/vendor/gems"
   end
 
   # TODO: assembly dependency plugins
@@ -54,6 +55,7 @@ task :server => [:bundle, work] do
   # execute Jenkins
   args = []
   args << "java"
+  args << "-Xrunjdwp:transport=dt_socket,server=y,address=8000,suspend=n"
   args << "-DJENKINS_HOME=#{work}"
   args << "-jar"
   args << Jenkins::War::LOCATION
