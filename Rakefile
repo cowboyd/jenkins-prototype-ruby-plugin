@@ -19,6 +19,10 @@ Jenkins::Rake.install_tasks
 desc "Directory used as JENKINS_HOME during 'rake server'"
 directory work = "work"
 
+task :foo,:x do |t,args|
+  puts "ARGS: #{args.inspect}"
+end
+
 desc "run a Jenkins server with this plugin"
 task :server => [:bundle, work] do
   require 'jenkins/war'
@@ -48,9 +52,11 @@ task :server => [:bundle, work] do
     # TODO: where do we put static resources?
     f.puts "Resource-Path: #{Dir.pwd}/views"
     f.puts "Gems-Home: #{Dir.pwd}/pkg/vendor/gems"
+    f.puts "Lib-Path: #{Dir.pwd}/lib/"
+    f.puts "Models-Path: #{Dir.pwd}/models"
   end
 
-  # TODO: assembly dependency plugins
+  # TODO: assemble dependency plugins
 
   # execute Jenkins
   args = []
