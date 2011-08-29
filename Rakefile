@@ -9,15 +9,11 @@ load "#{File.dirname(__FILE__)}/.rake" if File.exists? '.rake'
 PluginName = 'ruby-prototype'
 PluginVersion = '0.1.0'
 PluginJenkinsVersion = ">= 1.410"
-PluginDeps = []
+PluginDeps = {"ruby-runtime" => "0.1-SNAPSHOT"}
 
 require 'jenkins/rake'
 Jenkins::Rake.install_tasks
 
-# TODO: to be moved to ruby-plugin-tools later
-# but experimenting here first for rapid development cycle
-desc "Directory used as JENKINS_HOME during 'rake server'"
-directory work = "work"
 
 task :foo,:x do |t,args|
   puts "ARGS: #{args.inspect}"

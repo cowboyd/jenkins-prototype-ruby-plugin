@@ -5,5 +5,5 @@ source :rubygems
 gem "jenkins-plugin-runtime", :git => "https://github.com/cowboyd/jenkins-plugin-runtime"
 
 group :development do
-  gem "jenkins-war", ">= 1.426"
+#  gem "jenkins-plugin-tools"
 end
