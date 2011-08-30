@@ -5,6 +5,7 @@ source :rubygems
 gem "jenkins-plugin-runtime", :git => "https://github.com/cowboyd/jenkins-plugin-runtime.git"
 
 group :development do
-  # gem "jenkins-plugin", :path => "/Users/cowboyd/Projects/Jenkins/jenkins-plugins.rb/"
+  # we need this patched version of bundler in order to generate valide .hpi file
+  gem "bundler", :git => "https://github.com/cowboyd/bundler.git"
   gem "jenkins-plugin", :git => "https://github.com/cowboyd/jenkins-plugin.git"
 end
