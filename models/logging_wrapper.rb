@@ -18,13 +18,4 @@ class LoggingWrapper < Jenkins::Tasks::BuildWrapper
     return true
   end
 
-  # check :name do |validation, name|
-  #   validation.error "Please set a name" if name.empty?
-  #   #sets the handler for doCheckName on the descriptor
-  # end
-
-  # configure do
-  #   #sets the configure implementation on the descriptor
-  # end
-
 end
