@@ -18,7 +18,6 @@ module Jenkins
     class Proxies
       class RootAction
         include Java.hudson.model.RootAction
-        include Java.jenkins.ruby.Get
         include Jenkins::Plugin::Proxy
 
         # TODO: is it OK to use snake_case?
@@ -36,10 +35,6 @@ module Jenkins
 
         def descriptor
           @plugin.descriptors[@object.class]
-        end
-
-        def get(name)
-          @object.respond_to?(name) ? @object.send(name) : nil
         end
       end
 
