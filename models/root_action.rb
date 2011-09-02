@@ -56,6 +56,7 @@ class TestRootAction < Jenkins::Actions::RootAction
     "gear.png"
   end
 
+  # TODO: handle /erb/ (not yet)
   def url_name
     "erb"
   end
