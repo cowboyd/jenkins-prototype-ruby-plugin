@@ -12,7 +12,7 @@ I think we were putting the cart before the horse a bit, by making the tools fir
 
 # Extensions
 
-Right now, there is a single extension point named [`LogWrapper`](https://github.com/cowboyd/jenkins-prototype-ruby-plugin/blob/master/models/log_wrapper.rb).
+Right now, there is a single extension point named [`LoggingWrapper`](https://github.com/cowboyd/jenkins-prototype-ruby-plugin/blob/master/models/logging_wrapper.rb).
 This is just a trivial `BuildWrapper` that outputs a message to the console. However, if we can actually hoist
 this guy into the Jenkins runtime, then we're getting somewhere.
 
