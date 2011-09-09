@@ -17,4 +17,5 @@ class LoggingWrapper < Jenkins::Tasks::BuildWrapper
     listener.log "build finished\n"
     return true
   end
+
 end

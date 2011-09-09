@@ -9,7 +9,7 @@ load "#{File.dirname(__FILE__)}/.rake" if File.exists? '.rake'
 PluginName = 'ruby-prototype'
 PluginVersion = '0.1.0'
 PluginJenkinsVersion = ">= 1.410"
-PluginDeps = {"ruby-runtime" => "0.1-SNAPSHOT"}
+PluginDeps = {"ruby-runtime" => "0.2-SNAPSHOT"}
 
 require 'jenkins/rake'
 Jenkins::Rake.install_tasks
