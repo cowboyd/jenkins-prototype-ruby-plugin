@@ -2,7 +2,7 @@ source :rubygems
 
 # Use this line instead if you want to bundle from a local copy.
 # gem "jenkins-plugin-runtime", :path => "#{File.dirname(__FILE__)}/../jenkins-plugin-runtime"
-gem "jenkins-plugin-runtime", "~> 0.1.0"
+gem "jenkins-plugin-runtime", "~> 0.1.2"
 
 group :development do
   # we need this patched version of bundler in order to generate valide .hpi file
