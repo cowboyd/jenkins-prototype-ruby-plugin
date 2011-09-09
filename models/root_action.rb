@@ -33,7 +33,7 @@ module Jenkins
           @object.url_name
         end
 
-        # TODO: must convert to Rack interface
+        # TODO: stapler-jruby to support rack
         def doDynamic(request, response)
           @object.doDynamic(request, response)
         end
