@@ -18,8 +18,8 @@ this guy into the Jenkins runtime, then we're getting somewhere.
 
 # Running
 
-1. you need Jruby
-2. you need to install a special [patched version of Bundler](https://github.com/cowboyd/bundler/tree/master). *NOTE* - make sure you install off of the _master_ branch of this repo. The remote HEAD is 1_0_stable, so you must explicitly checkout master
-3. bundle
+1. use JRuby
+2. install a special [patched version of Bundler](https://github.com/cowboyd/bundler/tree/master). *NOTE* - make sure you install off of the _master_ branch of this repo. The remote HEAD is 1_0_stable, so you must explicitly checkout master
+3. `bundle`
 4. `rake server`
 
