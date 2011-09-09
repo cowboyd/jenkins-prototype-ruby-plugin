@@ -20,25 +20,33 @@ module Jenkins
         include Java.hudson.model.RootAction
         include Jenkins::Plugin::Proxy
 
-        # TODO: is it OK to use snake_case?
-        def display_name
+        def displayName
           @object.display_name
         end
 
-        def icon_file_name
+        def iconFileName
           @object.icon
         end
 
-        def url_name
+        def urlName
           @object.url_name
         end
 
-        def descriptor
+        def getDescriptor
           @plugin.descriptors[@object.class]
         end
       end
 
       register Jenkins::Actions::RootAction, RootAction
+    end
+  end
+end
+
+module Jenkins
+  class Plugin
+    # TODO: how many other extension points other than RootAction?
+    def register_root_action(action)
+      @peer.addExtension(export(action))
     end
   end
 end
@@ -56,3 +64,7 @@ class TestRootAction < Jenkins::Actions::RootAction
     "erb"
   end
 end
+
+# TODO: manual registration looks uglish but it would be more flexible than auto registration. 
+action = TestRootAction.new
+Jenkins::Plugin.instance.register_root_action(action)
