@@ -74,6 +74,8 @@ class TestRootAction < Jenkins::Actions::RootAction
     "root_action"
   end
 
+  # this part shows how to mount Rack app to take over the request handling entirely
+  # to see this in action request "/root_action/hi" in your browser
   include Jenkins::RackSupport
   def call(env)
     SomeSinatraApp.new.call(env)
