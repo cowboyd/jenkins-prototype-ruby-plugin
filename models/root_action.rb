@@ -54,6 +54,15 @@ module Jenkins
 end
 
 # Plugin part
+
+require 'sinatra/base'
+require 'jenkins/rack'
+class SomeSinatraApp < Sinatra::Base
+  get '/hi' do
+    'Hello world from Sinatra!'
+  end
+end
+
 class TestRootAction < Jenkins::Actions::RootAction
   display_name "Test Root Action"
 
@@ -65,9 +74,9 @@ class TestRootAction < Jenkins::Actions::RootAction
     "root_action"
   end
 
-  # TODO: the direct interface is temporarily
-  def doDynamic(request, response)
-    response.getWriter().println("path: " + request.getRestOfPath())
+  include Jenkins::RackSupport
+  def call(env)
+    SomeSinatraApp.new.call(env)
   end
 end
 
