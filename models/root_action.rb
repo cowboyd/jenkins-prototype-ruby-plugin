@@ -53,6 +53,26 @@ class TestRootAction < Jenkins::Model::RootAction
   end
 end
 
+class ModelReloadAction < Jenkins::Model::RootAction
+  display_name 'Reload Ruby plugins'
+  icon 'refresh.png'
+  url_path 'reload_ruby_plugins'
+
+  # TODO: no need to be a RackApp
+  include Jenkins::RackSupport
+  def call(env)
+    # TODO: add to Jenkins::Plugin
+    Jenkins::Plugin.instance.instance_eval do
+      @peer.getExtensions().clear
+    end
+    Jenkins::Plugin.instance.load_models
+    # TODO: is it enough for Jenkins/JRuby plugin for reloading?
+    Sinatra.new(Sinatra::Base) {
+      get('/') { redirect '/' }
+    }.call(env)
+  end
+end
+
 require 'webrick'
 require 'logger'
 class DirectoryListingRootAction < Jenkins::Model::RootAction
@@ -89,6 +109,8 @@ end
 
 # TODO: manual registration looks uglish but it would be more flexible than auto registration. 
 test = TestRootAction
+reload = ModelReloadAction.new
 dir = DirectoryListingRootAction.new(File.expand_path('..', File.dirname(__FILE__)))
 Jenkins::Plugin.instance.register_extension(test)
+Jenkins::Plugin.instance.register_extension(reload)
 Jenkins::Plugin.instance.register_extension(dir)
