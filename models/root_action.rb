@@ -59,6 +59,8 @@ class DirectoryListingRootAction < Jenkins::Model::RootAction
     @config = {
       :HTTPVersion => '1.1',
       :Logger => @logger,
+      :DirectoryIndex => ['index.html'],
+      :MimeTypes => WEBrick::HTTPUtils::DefaultMimeTypes,
     }
     server = Struct.new(:config).new
     server.config = @config
@@ -69,9 +71,10 @@ class DirectoryListingRootAction < Jenkins::Model::RootAction
   def doDynamic(request, response)
     begin
       req = WEBrick::HTTPRequest.new(@config)
-      req.path_info = ""
+      req.path_info = request.getRestOfPath() + "/"
       req.script_name = ""
-      req.instance_variable_set("@path", request.getPathInfo())
+      req.instance_variable_set("@path", request.getRestOfPath() + "/")
+      req.instance_variable_set("@request_method", 'GET')
       res = WEBrick::HTTPResponse.new(@config)
       @servlet.do_GET(req, res)
       res.send_body(str = '')
