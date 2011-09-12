@@ -44,15 +44,6 @@ module Jenkins
   end
 end
 
-module Jenkins
-  class Plugin
-    # TODO: how many other extension points other than RootAction?
-    def register_root_action(action)
-      @peer.addExtension(export(action))
-    end
-  end
-end
-
 # Plugin part
 
 require 'sinatra/base'
@@ -125,5 +116,5 @@ end
 # TODO: manual registration looks uglish but it would be more flexible than auto registration. 
 test = TestRootAction.new
 dir = DirectoryListingRootAction.new(File.expand_path('..', File.dirname(__FILE__)))
-Jenkins::Plugin.instance.register_root_action(test)
-Jenkins::Plugin.instance.register_root_action(dir)
+Jenkins::Plugin.instance.register_extension(test)
+Jenkins::Plugin.instance.register_extension(dir)
