@@ -4,7 +4,6 @@ module Jenkins
     class Proxies
       class RootAction
         include Java.hudson.model.RootAction
-        include Java.jenkins.ruby.DoDynamic
         include Jenkins::Plugin::Proxy
 
         def getDisplayName
@@ -17,11 +16,6 @@ module Jenkins
 
         def getUrlName
           @object.url_path
-        end
-
-        # TODO: stapler-jruby to support rack
-        def doDynamic(request, response)
-          @object.doDynamic(request, response)
         end
       end
 
@@ -91,6 +85,7 @@ class DirectoryListingRootAction < Jenkins::Model::RootAction
     @servlet = WEBrick::HTTPServlet::FileHandler.new(server, root, :FancyIndexing => true)
   end
 
+  include Java.jenkins.ruby.DoDynamic
   def doDynamic(request, response)
     begin
       req = WEBrick::HTTPRequest.new(@config)
