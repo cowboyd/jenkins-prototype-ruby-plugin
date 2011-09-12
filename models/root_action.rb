@@ -87,7 +87,7 @@ class DirectoryListingRootAction < Jenkins::Model::RootAction
 end
 
 # TODO: manual registration looks uglish but it would be more flexible than auto registration. 
-test = TestRootAction.new
+test = TestRootAction
 dir = DirectoryListingRootAction.new(File.expand_path('..', File.dirname(__FILE__)))
 Jenkins::Plugin.instance.register_extension(test)
 Jenkins::Plugin.instance.register_extension(dir)
