@@ -1,18 +1,3 @@
-# Ad-hoc extension for jenkins-plugin-runtime
-# TODO: Move to jenkins-plugin-runtime
-module Jenkins
-  module Actions
-    class RootAction
-      include Jenkins::Model::Action
-
-      # TODO: Move to Jenkins::Model::Action?
-      def url_name
-        self.class.name
-      end
-    end
-  end
-end
-
 module Jenkins
   class Plugin
     class Proxies
@@ -30,7 +15,7 @@ module Jenkins
         end
 
         def getUrlName
-          @object.url_name
+          @object.url_path
         end
 
         # TODO: stapler-jruby to support rack
@@ -39,7 +24,7 @@ module Jenkins
         end
       end
 
-      register Jenkins::Actions::RootAction, RootAction
+      register Jenkins::Model::RootAction, RootAction
     end
   end
 end
@@ -54,16 +39,10 @@ class SomeSinatraApp < Sinatra::Base
   end
 end
 
-class TestRootAction < Jenkins::Actions::RootAction
-  display_name "Test Root Action"
-
-  def icon
-    "gear.png"
-  end
-
-  def url_name
-    "root_action"
-  end
+class TestRootAction < Jenkins::Model::RootAction
+  display_name 'Test Root Action'
+  icon 'gear.png'
+  url_path 'root_action'
 
   # this part shows how to mount Rack app to take over the request handling entirely
   # to see this in action request "/root_action/hi" in your browser
@@ -75,8 +54,10 @@ end
 
 require 'webrick'
 require 'logger'
-class DirectoryListingRootAction < Jenkins::Actions::RootAction
-  display_name "Directory Listing"
+class DirectoryListingRootAction < Jenkins::Model::RootAction
+  display_name 'Directory Listing'
+  icon 'folder.png'
+  url_path 'dir'
 
   def initialize(root = File.dirname(__FILE__))
     @logger = Logger.new(STDERR)
@@ -87,14 +68,6 @@ class DirectoryListingRootAction < Jenkins::Actions::RootAction
     server = Struct.new(:config).new
     server.config = @config
     @servlet = WEBrick::HTTPServlet::FileHandler.new(server, root, :FancyIndexing => true)
-  end
-
-  def icon
-    "folder.png"
-  end
-
-  def url_name
-    "dir"
   end
 
   def doDynamic(request, response)
