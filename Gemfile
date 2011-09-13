@@ -8,5 +8,5 @@ gem "sinatra"
 
 group :development do
   # we need this patched version of bundler in order to generate valide .hpi file
-  gem "jenkins-plugin", "~> 0.1.2"
+  gem "jenkins-plugin", "~> 0.1.3"
 end
