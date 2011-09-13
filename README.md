@@ -8,6 +8,12 @@ its own structure that is completely independent.
 
 Inside this plugin are several extension points.
 
+# Running
+
+1. use JRuby
+1. `bundle`
+1. `rake server`
+
 # Extensions
 
 ## Logging Wrapper
@@ -30,10 +36,4 @@ This is a trivial `BuildWrapper` that outputs a message to the console whenever 
  https://github.com/cowboyd/jenkins-prototype-ruby-plugin/blob/master/models/root_action.rb#L72
 
  list the contents of the ruby plugin
-
-# Running
-
-1. use JRuby
-1. `bundle`
-1. `rake server`
 
