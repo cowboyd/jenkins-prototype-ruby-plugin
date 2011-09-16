@@ -1,16 +1,6 @@
 
 load "#{File.dirname(__FILE__)}/.rake" if File.exists? '.rake'
 
-# First, let's declare some metadata about the plugin that might be needed. These are properties
-# I just pulled out of the air. The point is, let's put everything as constants here, and then maybe we can
-# move all the metadata eventually into a `Pluginfile` or a `ruby-prototype.pluginspec` that can be eval'd
-# separately
-
-PluginName = 'ruby-prototype'
-PluginVersion = '0.1.0'
-PluginJenkinsVersion = ">= 1.410"
-PluginDeps = {"ruby-runtime" => "0.3"} # change this to -SNAPSHOT to co-develop this with ruby-runtime plugin
-
 require 'jenkins/rake'
 Jenkins::Rake.install_tasks
 
