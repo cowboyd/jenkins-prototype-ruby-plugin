@@ -18,9 +18,12 @@ class TestBuilder < Jenkins::Tasks::Builder
 
   def perform(build, launcher, listener)
     listener.log "perform\n"
-    # TODO: why stdout(listener) raises '(ArgumentError) wrong number of arguments (1 for 0)' ?
-    # TODO: listner must be 'export(listener)'
-    launcher.launch.pwd("/").cmds("echo", "Hello", "World").start().stdout(listener)
+    # TODO: Uglish. See TODO in jenkins-plugin-runtime
+    starter = launcher.launch.
+      pwd("/").
+      cmds("ls", "-l").
+      stdout(Jenkins::Plugin.instance.export(listener))
+    starter.join()
     true
   end
 end
