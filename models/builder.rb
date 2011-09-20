@@ -2,6 +2,10 @@ class TestBuilder < Jenkins::Tasks::Builder
 
   display_name "Test Builder"
 
+  def initialize(attrs)
+    p attrs
+  end
+
   def prebuild(build, listener)
     listener.log "= build_var\n"
     log_hash(listener, build.build_var)
