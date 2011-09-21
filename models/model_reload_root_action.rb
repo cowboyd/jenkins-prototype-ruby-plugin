@@ -18,5 +18,5 @@ class ModelReloadRootAction < Jenkins::Model::RootAction
   end
 end
 
-reload = ModelReloadAction.new
+reload = ModelReloadRootAction.new
 Jenkins::Plugin.instance.register_extension(reload)
