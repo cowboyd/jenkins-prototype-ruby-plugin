@@ -3,7 +3,7 @@ module Jenkins
   module Model
     class Build
       def workspace
-        @native.getWorkspace().toString()
+        @native.getWorkspace()
       end
     end
   end
@@ -30,18 +30,17 @@ class TravisScriptBuilder < Jenkins::Tasks::Builder
     init(build, nil, listener)
     logger.info "Prebuild"
 
-    # TODO: Some file access methods won't work for remote build.
-    # Find a way to do it even on remote host: File.exist?, File.read
     travis_file = workspace_file('.travis.yml')
-    unless File.exist?(travis_file)
+    unless File.exists(travis_file)
       logger.error"Travis config `#{travis_file}' not found"
       raise "Travis config file not found"
     end
     logger.info "Found travis file: " + travis_file
-    @config = YAML.load(File.read(travis_file))
+    # TODO: wrap InputStream into IO
+    @config = YAML.load(travis_file.read())
 
     @gemfile = @config['gemfile'] || 'Gemfile'
-    @gemfile = nil unless File.exist?(workspace_file(@gemfile))
+    @gemfile = nil unless workspace_file(@gemfile).exists
     @config['script'] ||= @gemfile ? 'bundle exec rake' : 'rake'
 
     logger.info "Prebuild finished"
@@ -76,7 +75,8 @@ private
   end
 
   def workspace_file(file)
-    File.join(@build.workspace, file)
+    #File.join(@build.workspace, file)
+    @build.workspace.child(file)
   end
 
   def setup_env
@@ -101,6 +101,7 @@ private
   end
 
   # TODO: It uses Shellwords module but isn't there a easy way to do
+  #   -> when we depend on 1.432, use cmdAsSingleString
   # 'command execution as a whole String'?
   # http://d.hatena.ne.jp/sikakura/20110324/1300977208 is doing
   # Arrays.asList(str.split(" ")) which should be wrong.
