@@ -83,6 +83,8 @@ module UISamples
         word
       end
     end
+    # TODO: for reloading. Caching instances is a memory leak. We should find another way.
+    all.clear
 
     # TODO: sample.jelly does not pick up 'it' correctly now.
     def sourceFiles
