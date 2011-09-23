@@ -1,3 +1,4 @@
+=begin
 class TestBuilder < Jenkins::Tasks::Builder
 
   display_name "Test Builder"
@@ -31,3 +32,4 @@ class TestBuilder < Jenkins::Tasks::Builder
     true
   end
 end
+=end
