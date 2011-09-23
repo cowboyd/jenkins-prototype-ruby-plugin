@@ -10,6 +10,7 @@ module Jenkins
 end
 
 require 'logger'
+require 'shellwords'
 require 'yaml'
 
 class TravisScriptBuilder < Jenkins::Tasks::Builder
@@ -59,8 +60,8 @@ class TravisScriptBuilder < Jenkins::Tasks::Builder
 
 private
 
-  def init(builder, launcher, listener)
-    @builder, @launcher, @listener = builder, launcher, listener
+  def init(build, launcher, listener)
+    @build, @launcher, @listener = build, launcher, listener
     @logger = JenkinsListenerLogger.new(@listener, display_name)
   end
 
@@ -93,8 +94,8 @@ private
     end
   end
 
-  # TODO: It doesn't run on some OSes such as Windows because of "bash -c".
-  # Is there a easy way to do 'command execution as a whole String'?
+  # TODO: It uses Shellwords module but isn't there a easy way to do
+  # 'command execution as a whole String'?
   # http://d.hatena.ne.jp/sikakura/20110324/1300977208 is doing
   # Arrays.asList(str.split(" ")) which should be wrong.
   def exec(command)
@@ -103,7 +104,7 @@ private
     starter = @launcher.launch.
       pwd(@build.workspace).
       envs(@env).
-      cmds("bash", "-c", command).
+      cmds(*Shellwords.split(command)).
       stdout(Jenkins::Plugin.instance.export(@listener))
     result = starter.join()
     logger.info "Command execution finished with #{result}"
