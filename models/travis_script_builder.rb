@@ -45,13 +45,11 @@ class TravisScriptBuilder < Jenkins::Tasks::Builder
     @config['script'] ||= @gemfile ? 'bundle exec rake' : 'rake'
 
     logger.info "Prebuild finished"
-    # TODO: not needed in the future.
-    true
   end
 
   def perform(build, launcher, listener)
     init(build, launcher, listener)
-    logger.info "Starting build"
+    logger.info "Build"
 
     setup_env
 
@@ -63,8 +61,7 @@ class TravisScriptBuilder < Jenkins::Tasks::Builder
       end
     end
 
-    # TODO: not needed in the future.
-    true
+    logger.info "Build finished"
   end
 
 private
