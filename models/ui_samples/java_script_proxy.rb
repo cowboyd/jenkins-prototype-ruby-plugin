@@ -1,7 +1,8 @@
 module UISamples
 
+  # WARNING: This port is incomplete now.
   class JavaScriptProxy < BaseAction
-    description "Use JavaScript proxy objects to access server-side Java objects from inside the browser."
+    description "[NOT YET] Use JavaScript proxy objects to access server-side Java objects from inside the browser."
 
     def initialize
       @i = 0
@@ -14,4 +15,4 @@ module UISamples
   end
 end
 
-Jenkins::Plugin.instance.register_extension(UISamples::JavaScriptProxy.new)
+Jenkins::Plugin.instance.register_extension(UISamples::JavaScriptProxy)

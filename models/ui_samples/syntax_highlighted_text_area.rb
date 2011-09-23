@@ -5,4 +5,4 @@ module UISamples
   end
 end
 
-Jenkins::Plugin.instance.register_extension(UISamples::SyntaxHighlightedTextArea.new)
+Jenkins::Plugin.instance.register_extension(UISamples::SyntaxHighlightedTextArea)

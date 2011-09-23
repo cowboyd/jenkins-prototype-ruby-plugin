@@ -1,7 +1,8 @@
 module UISamples
 
+  # WARNING: This port is incomplete.
   class AutoCompleteTextBox < BaseAction
-    description "Provide auto-completion to the text box"
+    description "[NOT YET] Provide auto-completion to the text box"
 
     # TODO: how do we implement AutoCompletionCandidates?
 
@@ -60,4 +61,4 @@ module UISamples
   end
 end
 
-Jenkins::Plugin.instance.register_extension(UISamples::AutoCompleteTextBox.new)
+Jenkins::Plugin.instance.register_extension(UISamples::AutoCompleteTextBox)
