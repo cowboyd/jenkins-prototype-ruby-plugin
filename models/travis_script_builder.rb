@@ -7,6 +7,15 @@ module Jenkins
       end
     end
   end
+
+  class Launcher
+    def launch(listener = nil, &block)
+      starter = @native.launch()
+      starter.stdout(Jenkins::Plugin.instance.export(listener)) if listener
+      starter.instance_eval(&block)
+      starter.join()
+    end
+  end
 end
 
 require 'logger'
@@ -100,13 +109,14 @@ private
   # Arrays.asList(str.split(" ")) which should be wrong.
   def exec(command)
     logger.info "Launching command: #{command}"
-    # TODO: Uglish. See TODO in jenkins-plugin-runtime
-    starter = @launcher.launch.
-      pwd(@build.workspace).
-      envs(@env).
-      cmds(*Shellwords.split(command)).
-      stdout(Jenkins::Plugin.instance.export(@listener))
-    result = starter.join()
+    workspace = @build.workspace
+    env = @env
+    result = @launcher.launch(@listener) {
+      # You cannot access @var here.
+      pwd(workspace)
+      envs(env)
+      cmds(*Shellwords.split(command))
+    }
     logger.info "Command execution finished with #{result}"
     raise "command execution failed" if result != 0
   end
