@@ -31,13 +31,12 @@ class TravisScriptBuilder < Jenkins::Tasks::Builder
     logger.info "Prebuild"
 
     travis_file = workspace_file('.travis.yml')
-    unless File.exists(travis_file)
+    unless travis_file.exists
       logger.error"Travis config `#{travis_file}' not found"
       raise "Travis config file not found"
     end
-    logger.info "Found travis file: " + travis_file
-    # TODO: wrap InputStream into IO
-    @config = YAML.load(travis_file.read())
+    logger.info "Found travis file: " + travis_file.to_s
+    @config = YAML.load(travis_file.read.to_io.read)
 
     @gemfile = @config['gemfile'] || 'Gemfile'
     @gemfile = nil unless workspace_file(@gemfile).exists
