@@ -40,7 +40,7 @@ class TravisScriptBuilder < Jenkins::Tasks::Builder
 
     @gemfile = @config['gemfile'] || 'Gemfile'
     @gemfile = nil unless workspace_file(@gemfile).exists
-    @config['script'] ||= @gemfile ? 'bundle exec rake' : 'rake'
+    @config['script'] ||= @gemfile ? "bundle install\nbundle exec rake" : 'rake'
 
     logger.info "Prebuild finished"
   end
