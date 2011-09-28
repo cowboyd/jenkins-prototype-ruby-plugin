@@ -1,15 +1,137 @@
 # TODO: move to jenkins-plugin-runtime
 module Jenkins
   module Model
+    # TODO: spec
     class Build
       def workspace
-        @native.getWorkspace()
+        FilePath.new(@native.getWorkspace())
       end
     end
   end
 
-  class Launcher
+  # TODO: spec
+  class FilePath
+    def initialize(native)
+      @native = native
+    end
 
+    # Ruby's Pathname internace
+
+    def +(name)
+      FilePath.new(@native.child(name))
+    end
+
+    def to_s
+      @native.getRemote()
+    end
+
+    def realpath
+      @native.absolutize().getRemote()
+    end
+
+    def read(*args)
+      @native.read.to_io.read(*args)
+    end
+    alias binread read
+
+    # TODO: atime jnr-posix?
+    # TODO: ctime jnr-posix?
+
+    def mtime
+      Time.at(@native.lastModified())
+    end
+
+    def chmod(mask)
+      @native.chmod(mask)
+    end
+
+    # TODO: chown
+    # TODO: open
+
+    def rename(to)
+      @native.renameTo(create_filepath(to))
+    end
+
+    def stat
+      # TODO: @native.mode()
+      nil
+    end
+
+    # TODO: utime
+
+    def basename
+      FilePath.new(create_filepath(@native.getName()))
+    end
+
+    # TODO: dirname
+    # TODO: extname
+
+    def exist?
+      @native.exists()
+    end
+
+    def directory?
+      @native.isDirectory()
+    end
+
+    def file?
+      !directory?
+    end
+
+    def size
+      @native.length()
+    end
+
+    def entries
+      @native.list().map { |native|
+        FilePath.new(native)
+      }
+    end
+
+    def mkdir
+      @native.mkdirs
+    end
+
+    # TODO: rmdir
+    # TODO: opendir
+
+    def each_entry(&block)
+      entries.each do |child|
+        yield child
+      end
+    end
+
+    def delete
+      @native.delete()
+    end
+    alias unlink delete
+
+    def rmtree
+      @native.deleteRecursive()
+    end
+
+    def parent
+      FilePath.new(@native.getParent())
+    end
+
+    # Original interface
+
+    def remote?
+      @native.isRemote()
+    end
+
+    # TODO: createTempDir
+    # TODO: createTempFile
+
+  private
+
+    def create_filepath(path)
+      hudson.FilePath.new(@native.getChannel(), path)
+    end
+  end
+
+  # TODO: spec
+  class Launcher
     class Proc
       def initialize(native)
         @native = native
@@ -48,12 +170,11 @@ module Jenkins
     # spawn([env,] command... [,options]) -> proc
     def spawn(*args)
       env, cmd, options = scan_args(args)
+
       starter = @native.launch()
-      # env
       starter.envs(env)
-      # options
       if opt_chdir = options[:chdir]
-        starter.pwd(opt_chdir)
+        starter.pwd(opt_chdir.to_s)
       end
       if opt_in = options[:in]
         starter.stdin(opt_in.to_inputstream)
@@ -68,7 +189,6 @@ module Jenkins
       if opt_err = options[:err]
         starter.stderr(opt_err.to_outputstream)
       end
-      # cmd
       case cmd
       when Array
         starter.cmds(cmd)
@@ -77,6 +197,8 @@ module Jenkins
           # when we are on 1.432, we can use cmdAsSingleString
           starter.cmdAsSingleString(cmd.to_s)
         rescue NoMethodError
+          # http://d.hatena.ne.jp/sikakura/20110324/1300977208 is doing
+          # Arrays.asList(str.split(" ")) which should be wrong.
           require 'shellwords'
           starter.cmds(*Shellwords.split(cmd.to_s))
         end
@@ -124,16 +246,16 @@ class TravisScriptBuilder < Jenkins::Tasks::Builder
     init(build, nil, listener)
     logger.info "Prebuild"
 
-    travis_file = workspace_file('.travis.yml')
-    unless travis_file.exists
+    travis_file = workspace + '.travis.yml'
+    unless travis_file.exist?
       logger.error"Travis config `#{travis_file}' not found"
       raise "Travis config file not found"
     end
-    logger.info "Found travis file: " + travis_file.to_s
-    @config = YAML.load(travis_file.read.to_io.read)
+    logger.info "Found travis file: #{travis_file}"
+    @config = YAML.load(travis_file.read)
 
     @gemfile = @config['gemfile'] || 'Gemfile'
-    @gemfile = nil unless workspace_file(@gemfile).exists
+    @gemfile = nil unless (workspace + @gemfile).exist?
     @config['script'] ||= @gemfile ? "bundle exec rake" : 'rake'
 
     logger.info "Prebuild finished"
@@ -161,8 +283,8 @@ private
     @logger
   end
 
-  def workspace_file(file)
-    @build.workspace.child(file)
+  def workspace
+    @build.workspace
   end
 
   def setup_env
@@ -207,14 +329,9 @@ private
     end
   end
 
-  # TODO: It uses Shellwords module but isn't there a easy way to do
-  #   -> when we depend on 1.432, use cmdAsSingleString
-  # 'command execution as a whole String'?
-  # http://d.hatena.ne.jp/sikakura/20110324/1300977208 is doing
-  # Arrays.asList(str.split(" ")) which should be wrong.
   def exec(env, command)
     logger.info "Launching command: #{command}, with environment: #{env.inspect}"
-    result = @launcher.execute(command, :chdir => @build.workspace, :out => @listener)
+    result = @launcher.execute(command, :chdir => workspace, :out => @listener)
     logger.info "Command execution finished with #{result}"
     raise "command execution failed" if result != 0
   end

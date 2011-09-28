@@ -4,5 +4,5 @@ Jenkins::Plugin::Specification.new do |plugin|
   plugin.version = '0.1.0'
   plugin.description = 'a pure ruby playground for Jenkins plugins'
 
-  plugin.depends_on 'ruby-runtime', '0.3'
+  plugin.depends_on 'ruby-runtime', '0.4-SNAPSHOT'
 end
