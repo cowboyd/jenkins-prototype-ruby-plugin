@@ -7,6 +7,10 @@ module Jenkins
         FilePath.new(@native.getWorkspace())
       end
     end
+
+    # TODO: spec
+    class Listener
+    end
   end
 
   # TODO: spec
@@ -287,8 +291,13 @@ private
     @build.workspace
   end
 
+  # TODO: we should have common gem repository
+  def default_env
+    {'BUNDLE_PATH' => '.'}
+  end
+
   def setup_env
-    env = {}
+    env = default_env
     if @gemfile
       env['BUNDLE_GEMFILE'] = @gemfile
     end
@@ -302,8 +311,7 @@ private
 
   def install_dependencies
     if @gemfile
-      # TODO: we should have common gem repository
-      env = {'BUNDLE_PATH' => '.'}
+      env = default_env
       script = "bundle install"
       script += " #{@config['bundler_args']}" if @config['bundler_args']
       exec(env, script)
@@ -331,7 +339,7 @@ private
 
   def exec(env, command)
     logger.info "Launching command: #{command}, with environment: #{env.inspect}"
-    result = @launcher.execute(command, :chdir => workspace, :out => @listener)
+    result = @launcher.execute(env, command, :chdir => workspace, :out => @listener)
     logger.info "Command execution finished with #{result}"
     raise "command execution failed" if result != 0
   end
