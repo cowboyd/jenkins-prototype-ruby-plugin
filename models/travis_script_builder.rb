@@ -9,12 +9,73 @@ module Jenkins
     end
 
     # TODO: spec
+    require 'logger'
     class Listener
+      attr_reader :natvie
+      attr_accessor :level
+
+      def initialize(native)
+        @native = native
+        @level = Logger::DEBUG
+      end
+
+      def debug?; @level <= DEBUG; end
+      def info?;  @level <= INFO;  end
+      def warn?;  @level <= WARN;  end
+      def error?; @level <= ERROR; end
+      def fatal?; @level <= FATAL; end
+
+      def debug(msg = nil, &block);   add(Logger::DEBUG,   msg, &block); end
+      def info(msg = nil, &block);    add(Logger::INFO,    msg, &block); end
+      def warn(msg = nil, &block);    add(Logger::WARN,    msg, &block); end
+      def error(msg = nil, &block);   add(Logger::ERROR,   msg, &block); end
+      def fatal(msg = nil, &block);   add(Logger::FATAL,   msg, &block); end
+      def unknown(msg = nil, &block); add(Logger::UNKNOWN, msg, &block); end
+
+      def <<(msg)
+        logger.write(msg.to_s)
+      end
+
+    private
+
+      def add(severity, msg = nil, &block)
+        severity ||= Logger::UNKNOWN
+        if msg.nil? && block_given?
+          msg = yield
+        end
+        str = msg2str(msg) + "\n"
+        return true if severity < @level
+        case severity
+        when Logger::DEBUG, Logger::INFO
+          logger.write(str)
+        when Logger::WARN, Logger::ERROR
+          @native.error(str)
+        else
+          @native.fatalError(str)
+        end
+      end
+
+      def msg2str(msg)
+        case msg
+        when ::String
+          msg
+        when ::Exception
+          "#{msg.message} (#{msg.class})\n" << (msg.backtrace || []).join("\n")
+        else
+          msg.inspect
+        end
+      end
+
+      def logger
+        @native.getLogger()
+      end
     end
   end
 
   # TODO: spec
   class FilePath
+    attr_reader :natvie
+
     def initialize(native)
       @native = native
     end
@@ -137,6 +198,8 @@ module Jenkins
   # TODO: spec
   class Launcher
     class Proc
+      attr_reader :natvie
+
       def initialize(native)
         @native = native
       end
@@ -237,7 +300,6 @@ module Jenkins
   end
 end
 
-require 'logger'
 require 'shellwords'
 require 'yaml'
 
@@ -248,43 +310,46 @@ class TravisScriptBuilder < Jenkins::Tasks::Builder
   # TODO: better to use travis-worker instead of re-implementing it?
   def prebuild(build, listener)
     init(build, nil, listener)
-    logger.info "Prebuild"
+    listener.info "Prebuild"
 
     travis_file = workspace + '.travis.yml'
     unless travis_file.exist?
-      logger.error"Travis config `#{travis_file}' not found"
+      listener.error"Travis config `#{travis_file}' not found"
       raise "Travis config file not found"
     end
-    logger.info "Found travis file: #{travis_file}"
+    listener.info "Found travis file: #{travis_file}"
     @config = YAML.load(travis_file.read)
 
     @gemfile = @config['gemfile'] || 'Gemfile'
     @gemfile = nil unless (workspace + @gemfile).exist?
     @config['script'] ||= @gemfile ? "bundle exec rake" : 'rake'
 
-    logger.info "Prebuild finished"
+    listener.info "Prebuild finished"
   end
 
   def perform(build, launcher, listener)
     init(build, launcher, listener)
-    logger.info "Build"
+    listener.info "Build"
 
     env = setup_env
     install_dependencies
     run_scripts(env)
 
-    logger.info "Build finished"
+    listener.info "Build finished"
   end
 
 private
 
   def init(build, launcher, listener)
     @build, @launcher, @listener = build, launcher, listener
-    @logger = JenkinsListenerLogger.new(@listener, display_name)
   end
 
-  def logger
-    @logger
+  def launcher
+    @launcher
+  end
+
+  def listener
+    @listener
   end
 
   def workspace
@@ -305,7 +370,7 @@ private
       key, value = line.split(/\s*=\s*/, 2)
       env[key] = value
     end
-    logger.info "Additional environment variable(s): #{env.inspect}"
+    listener.info "Additional environment variable(s): #{env.inspect}"
     env
   end
 
@@ -321,7 +386,7 @@ private
   def run_scripts(env)
     %w{before_script script after_script}.each do |type|
       next unless @config.key?(type)
-      logger.info "Start #{type}: " + @config[type]
+      listener.info "Start #{type}: " + @config[type]
       scan_multiline_scripts(@config[type]).each do |script|
         exec(env, script)
       end
@@ -338,30 +403,9 @@ private
   end
 
   def exec(env, command)
-    logger.info "Launching command: #{command}, with environment: #{env.inspect}"
-    result = @launcher.execute(env, command, :chdir => workspace, :out => @listener)
-    logger.info "Command execution finished with #{result}"
+    listener.info "Launching command: #{command}, with environment: #{env.inspect}"
+    result = launcher.execute(env, command, :chdir => workspace, :out => listener)
+    listener.info "Command execution finished with #{result}"
     raise "command execution failed" if result != 0
-  end
-
-  class JenkinsListenerLogger < Logger
-    class JenkinsListenerIO
-      def initialize(listener)
-        @listener = listener
-      end
-
-      def write(msg)
-        @listener.log(msg)
-      end
-
-      def close
-        # do nothing for imported device
-      end
-    end
-
-    def initialize(listener, progname)
-      super(JenkinsListenerIO.new(listener))
-      self.progname = progname
-    end
   end
 end
