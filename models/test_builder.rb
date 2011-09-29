@@ -8,28 +8,21 @@ class TestBuilder < Jenkins::Tasks::Builder
   end
 
   def prebuild(build, listener)
-    listener.log "= build_var\n"
+    listener.info "= build_var"
     log_hash(listener, build.build_var)
-    listener.log "= env\n"
+    listener.info "= env"
     log_hash(listener, build.env)
-    true
   end
 
   def log_hash(listener, hash)
     hash.each do |k, v|
-      listener.log [k, ": ", v, "\n"].join
+      listener.info [k, ": ", v].join
     end
   end
 
   def perform(build, launcher, listener)
-    listener.log "perform\n"
-    # TODO: Uglish. See TODO in jenkins-plugin-runtime
-    starter = launcher.launch.
-      pwd("/").
-      cmds("ls", "-l").
-      stdout(Jenkins::Plugin.instance.export(listener))
-    starter.join()
-    true
+    listener.info "perform"
+    launcher.execute("ls -l", :chdir => "/", :out => listener)
   end
 end
 =end

@@ -8,14 +8,12 @@ class LoggingWrapper < Jenkins::Tasks::BuildWrapper
 
   # Called some time before the build is to start.
   def setup(build, launcher, listener, env)
-    listener.log "build will start\n"
-    return true
+    listener.info "build will start"
   end
 
   # Called some time when the build is finished.
   def teardown(build, listener, env)
-    listener.log "build finished\n"
-    return true
+    listener.info "build finished"
   end
 
 end
