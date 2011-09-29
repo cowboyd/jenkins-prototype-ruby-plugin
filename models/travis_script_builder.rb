@@ -300,7 +300,6 @@ module Jenkins
   end
 end
 
-require 'shellwords'
 require 'yaml'
 
 class TravisScriptBuilder < Jenkins::Tasks::Builder
