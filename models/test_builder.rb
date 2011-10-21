@@ -1,4 +1,3 @@
-=begin
 class TestBuilder < Jenkins::Tasks::Builder
 
   display_name "Test Builder"
@@ -25,4 +24,3 @@ class TestBuilder < Jenkins::Tasks::Builder
     launcher.execute("ls -l", :chdir => "/", :out => listener)
   end
 end
-=end
