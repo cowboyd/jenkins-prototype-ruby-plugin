@@ -1,3 +1,5 @@
+require 'jenkins/rack'
+
 class ModelReloadRootAction < Jenkins::Model::RootAction
   display_name 'Reload Ruby plugins'
   icon 'refresh.png'
