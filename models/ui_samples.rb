@@ -5,8 +5,8 @@ module UISamples
     display_name 'UI Samples (Ruby)'
     url_path 'ui-samples-ruby'
 
-    include Java.jenkins.ruby.GetDynamic
-    def getDynamic(name, req, res)
+    include Java.jenkins.ruby.Get
+    def get(name)
       all.find { |action| action.url_path == name }
     end
 
